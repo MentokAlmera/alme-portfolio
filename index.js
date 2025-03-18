@@ -1,11 +1,24 @@
 const express = require("express")
 const app = express();
 const bodyParser = require("body-parser")
+const { sequelize } = require('./models'); // Sequelize connection
+const commentsRoute = require('../js/comments'); // Import comments route
+
 
 app.set("view engine", "ejs");
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.json()); // Parse JSON
+app.use('/comments', commentsRoute);
+
+sequelize.sync()
+    .then(() => {
+        console.log('Database synced');
+        app.listen(3000, () => console.log('Server running on port 3000'));
+    })
+    .catch(err => console.error('Error syncing database:', err));
+
 
 let goals = [
     { img: "diploma.png", text: "Graduate", description: "Achieve my academic goals and earn my diploma." },
@@ -15,13 +28,13 @@ let goals = [
 ];
 
 
-let comments = [
-    {name: "Alme", text:"meow"},
-    {name: "Alme", text:"meow"},
-    {name: "Alme", text:"meow"},
-    {name: "Alme", text:"meow"},
-    {name: "Alme", text:"meow"}
-]
+// let comments = [
+//     {name: "Alme", text:"meow"},
+//     {name: "Alme", text:"meow"},
+//     {name: "Alme", text:"meow"},
+//     {name: "Alme", text:"meow"},
+//     {name: "Alme", text:"meow"}
+// ]
 
 let PORT = 8888;
 app.listen (8888, ()=> {
